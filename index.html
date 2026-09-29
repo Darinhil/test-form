@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>General Voucher</title>
+<style>
+:root{
+  --bg:#f4f6f8;--card:#fff;--ink:#0f1f2b;--muted:#5b6b78;--line:#d9e0e6;--line-strong:#b9c4cd;
+  --brand:#0f766e;--brand-hover:#0b5f58;--brand-soft:#e6f4f2;--danger:#b42318;--danger-soft:#fdeceb;
+  --r:8px;--h:40px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+
+/* Top bar */
+.topbar{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+.topbar-in{max-width:1120px;margin:auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.mark{width:40px;height:40px;border-radius:50%;background:var(--brand);flex:none}
+.brand b{display:block;font-size:16px;line-height:1.2}
+.brand span{display:block;font-size:12.5px;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+
+/* Buttons */
+button{font:inherit;font-weight:600;height:var(--h);padding:0 16px;border-radius:var(--r);border:1px solid var(--line-strong);background:#fff;color:var(--ink);cursor:pointer;transition:background .15s,border-color .15s}
+button:hover{background:#f1f5f7;border-color:var(--muted)}
+button.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+button.primary:hover{background:var(--brand-hover);border-color:var(--brand-hover)}
+button.link{border:0;background:transparent;color:var(--brand);padding:0 10px}
+button.link:hover{background:var(--brand-soft)}
+:focus-visible{outline:3px solid rgba(15,118,110,.35);outline-offset:1px}
+
+/* Layout */
+main{max-width:1120px;margin:0 auto;padding:28px 24px 56px}
+.page-title{margin:0 0 4px;font-size:26px;letter-spacing:-.01em}
+.page-sub{margin:0 0 24px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:20px}
+.card-head{margin-bottom:18px}
+.card-head h2{margin:0;font-size:17px}
+.card-head p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+.grid{display:grid;gap:18px 20px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.span2{grid-column:span 2}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.two-col .card{margin-bottom:0}
+.two-col{margin-bottom:20px}
+
+/* Fields */
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>label,.group-label{font-size:13.5px;font-weight:600}
+.req{color:var(--danger);margin-left:2px}
+.opt-tag{font-weight:400;color:var(--muted);font-size:12.5px;margin-left:4px}
+input[type=text],input[type=date],input[type=number],input:not([type]),textarea{
+  font:inherit;color:var(--ink);width:100%;height:var(--h);padding:0 12px;background:#fff;border:1px solid var(--line-strong);border-radius:var(--r);transition:border-color .15s,box-shadow .15s}
+textarea{height:auto;min-height:96px;padding:10px 12px;resize:vertical}
+input:hover,textarea:hover{border-color:var(--muted)}
+input:focus,textarea:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 3px rgba(15,118,110,.2)}
+input[readonly]{background:#f1f5f7;color:var(--ink);font-weight:600}
+.err{display:none;color:var(--danger);font-size:13px}
+.invalid input,.invalid textarea{border-color:var(--danger);background:var(--danger-soft)}
+.invalid .err{display:block}
+input:user-invalid{border-color:var(--danger);background:var(--danger-soft)}
+
+/* Choice chips */
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.chip{position:relative;display:flex;align-items:center;gap:10px;min-height:var(--h);padding:8px 12px;border:1px solid var(--line-strong);border-radius:var(--r);cursor:pointer;background:#fff;transition:border-color .15s,background .15s}
+.chip:hover{border-color:var(--muted);background:#f8fafb}
+.chip input{width:18px;height:18px;margin:0;accent-color:var(--brand);flex:none}
+.chip:has(input:checked){border-color:var(--brand);background:var(--brand-soft);font-weight:600}
+.chip:has(input:focus-visible){outline:3px solid rgba(15,118,110,.35);outline-offset:1px}
+.invalid .chip{border-color:var(--danger)}
+.cheque{margin-top:16px;max-width:320px}
+
+/* Table */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;min-width:980px;font-size:14px}
+thead th{background:#f1f5f7;text-align:left;font-size:12.5px;font-weight:600;color:var(--muted);padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+thead tr.grp th{text-align:center;color:var(--ink);border-bottom:1px solid var(--line)}
+th.r,td.r{text-align:right}
+tbody td{padding:6px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#fafcfc}
+tbody td input{height:36px}
+td input.num{text-align:right}
+td.no{width:44px;text-align:center;color:var(--muted);font-size:13px}
+td.rm{width:44px;text-align:center}
+td.rm button{height:32px;width:32px;padding:0;border:0;background:transparent;color:var(--muted);font-size:16px}
+td.rm button:hover{background:var(--danger-soft);color:var(--danger)}
+tfoot td{padding:12px 14px;font-weight:700;background:#f8fafb;border-top:1px solid var(--line-strong);text-align:right}
+tfoot td.lbl{text-align:right;color:var(--muted);font-weight:600}
+.tbl-tools{margin-top:12px}
+
+/* Approvals */
+.appr{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.appr-col{border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:12px;background:#fbfcfd}
+.appr-col h3{margin:0;font-size:13.5px;font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.appr-col .field>label{font-weight:500;color:var(--muted);font-size:12.5px}
+.appr-col input{height:36px;padding:0 10px}
+.appr-col .sigbox{height:64px}
+
+/* Alerts */
+.banner{display:none;margin-bottom:20px;padding:14px 16px;border:1px solid #f1b5b0;background:var(--danger-soft);color:var(--danger);border-radius:var(--r);font-size:14px}
+.banner.show{display:block}
+.banner b{display:block;margin-bottom:2px}
+.foot{display:flex;justify-content:flex-end;gap:8px;padding-top:4px}
+
+/* Responsive */
+@media (max-width:980px){.appr{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:820px){
+  .g3,.two-col{grid-template-columns:1fr 1fr}
+  .two-col{grid-template-columns:1fr}
+  .two-col .card{margin-bottom:0}
+}
+@media (max-width:620px){
+  .topbar-in{padding:10px 16px;flex-wrap:wrap}
+  .actions{width:100%}.actions button{flex:1}
+  main{padding:20px 16px 40px}
+  .card{padding:18px}
+  .g3,.g2{grid-template-columns:1fr}
+  .span2{grid-column:auto}
+  .appr{grid-template-columns:1fr}
+  .page-title{font-size:22px}
+  .foot button{flex:1}
+}
+
+/* Print */
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  body{background:#fff;font-size:11px}
+  .topbar,.foot,.tbl-tools,td.rm,th.rm,.banner,.err{display:none!important}
+  main{padding:0;max-width:none}
+  .card{border:1px solid #000;border-radius:0;padding:10px;margin-bottom:8px;break-inside:avoid}
+  input,textarea{border:0!important;border-bottom:1px solid #999!important;background:transparent!important;box-shadow:none!important}
+  .tbl-wrap{overflow:visible;border-radius:0}table{min-width:0}
+  .chip{border:0;padding:0}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div><b>Live &amp; Learn Cambodia Org.</b><span>អង្គការរស់នៅនិងសិក្សានៅកម្ពុជា</span></div>
+    </div>
+    <div class="actions">
+      <button class="link" id="reset" type="button">Clear form</button>
+      <button id="addRowTop" type="button">Add row</button>
+      <button class="primary" id="print" type="button">Print / Save PDF</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <h1 class="page-title">General Voucher</h1>
+  <p class="page-sub">Complete each section below. Fields marked <span class="req">*</span> are required.</p>
+
+  <div class="banner" id="banner" role="alert"><b>Please complete the required fields</b><span id="bannerList"></span></div>
+
+  <!-- 1. Voucher info -->
+  <section class="card" aria-labelledby="s1">
+    <div class="card-head"><h2 id="s1">Voucher information</h2><p>Reference numbers and the date of this voucher.</p></div>
+    <div class="grid g3">
+      <div class="field" data-req="vno"><label for="vno">Voucher No <span class="req">*</span></label><input id="vno" autocomplete="off"><span class="err">Enter the voucher number.</span></div>
+      <div class="field" data-req="vdate"><label for="vdate">Voucher Date <span class="req">*</span></label><input id="vdate" type="date"><span class="err">Select the voucher date.</span></div>
+      <div class="field"><label for="advno">Adv. No <span class="opt-tag">Optional</span></label><input id="advno" autocomplete="off"></div>
+    </div>
+  </section>
+
+  <!-- 2. Requester -->
+  <section class="card" aria-labelledby="s2">
+    <div class="card-head"><h2 id="s2">Requester details</h2><p>Who is submitting this voucher and why.</p></div>
+    <div class="grid g2">
+      <div class="field" data-req="name"><label for="name">Name <span class="req">*</span></label><input id="name" autocomplete="name"><span class="err">Enter the requester's name.</span></div>
+      <div class="field"><label for="pos">Position</label><input id="pos"></div>
+      <div class="field span2" data-req="purpose"><label for="purpose">Purpose <span class="req">*</span></label><input id="purpose"><span class="err">Enter the purpose of this voucher.</span></div>
+      <div class="field"><label for="sig">Signature</label><input id="sig"></div>
+      <div class="field"><label for="sdate">Date</label><input id="sdate" type="date"></div>
+    </div>
+  </section>
+
+  <!-- 3. Type + payment -->
+  <div class="two-col">
+    <section class="card" aria-labelledby="s3">
+      <div class="card-head"><h2 id="s3">Type of voucher <span class="req">*</span></h2><p>Select one.</p></div>
+      <div class="field" data-req="type" role="radiogroup" aria-labelledby="s3">
+        <div class="chips">
+          <label class="chip"><input type="radio" name="type" value="Cash Advance"> Cash Advance</label>
+          <label class="chip"><input type="radio" name="type" value="Adv. Settlement"> Adv. Settlement</label>
+          <label class="chip"><input type="radio" name="type" value="Direct Payment"> Direct Payment</label>
+          <label class="chip"><input type="radio" name="type" value="Journal"> Journal</label>
+          <label class="chip"><input type="radio" name="type" value="Receipt"> Receipt</label>
+        </div>
+        <span class="err">Select a voucher type.</span>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="s4">
+      <div class="card-head"><h2 id="s4">Mode of payment <span class="req">*</span></h2><p>Select one.</p></div>
+      <div class="field" data-req="mode" role="radiogroup" aria-labelledby="s4">
+        <div class="chips">
+          <label class="chip"><input type="radio" name="mode" value="Cash"> Cash</label>
+          <label class="chip"><input type="radio" name="mode" value="Non-Cash"> Non-Cash</label>
+          <label class="chip"><input type="radio" name="mode" value="Bank Transfer"> Bank Transfer</label>
+          <label class="chip"><input type="radio" name="mode" value="Bank Cheque"> Bank Cheque</label>
+        </div>
+        <span class="err">Select a payment mode.</span>
+      </div>
+      <div class="field cheque"><label for="chq">Cheque # <span class="opt-tag">If paying by cheque</span></label><input id="chq"></div>
+    </section>
+  </div>
+
+  <!-- 4. Line items -->
+  <section class="card" aria-labelledby="s5">
+    <div class="card-head"><h2 id="s5">Line items</h2><p>List each item. Balance is calculated as Amount minus Liquidated Amount, and totals update automatically.</p></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr class="grp">
+            <th colspan="7"></th><th colspan="3">Finance only</th><th></th>
+          </tr>
+          <tr>
+            <th>No.</th><th style="min-width:220px">Description</th><th>Funding Source</th><th>Budget Code</th>
+            <th class="r">Amount</th><th class="r">Liquidated Amount</th><th class="r">Balance</th>
+            <th>CoA</th><th class="r">Debit (Dr)</th><th class="r">Credit (Cr)</th><th class="rm"></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" class="lbl">TOTAL AMOUNT</td>
+            <td id="tAmt">-</td><td id="tLiq">-</td><td id="tBal">-</td>
+            <td></td><td id="tDr">-</td><td id="tCr">-</td><td class="rm"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="tbl-tools"><button class="link" id="addRow" type="button">+ Add row</button></div>
+  </section>
+
+  <!-- 5. Remarks -->
+  <section class="card" aria-labelledby="s6">
+    <div class="card-head"><h2 id="s6">Remarks</h2><p>Anything the reviewer should know.</p></div>
+    <div class="field"><label for="remarks" class="opt-tag" style="margin:0;color:var(--muted)">Optional</label><textarea id="remarks"></textarea></div>
+  </section>
+
+  <!-- 6. Approvals -->
+  <section class="card" aria-labelledby="s7">
+    <div class="card-head"><h2 id="s7">Review and approval</h2><p>Completed by each person in the approval chain.</p></div>
+    <div class="appr" id="sign"></div>
+  </section>
+
+  <div class="foot">
+    <button type="button" id="resetBottom">Clear form</button>
+    <button type="button" class="primary" id="printBottom">Print / Save PDF</button>
+  </div>
+</main>
+
+<script>
+const ROWS = 8;
+const tbody = document.getElementById('rows');
+const fmt = n => n ? n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '-';
+const val = el => parseFloat(el.value) || 0;
+
+function addRow() {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="no"></td>
+    <td><input data-k="desc" aria-label="Description"></td>
+    <td><input data-k="fund" aria-label="Funding source"></td>
+    <td><input data-k="code" aria-label="Budget code"></td>
+    <td><input data-k="amt" class="num" type="number" step="0.01" min="0" placeholder="0.00" aria-label="Amount"></td>
+    <td><input data-k="liq" class="num" type="number" step="0.01" min="0" placeholder="0.00" aria-label="Liquidated amount"></td>
+    <td><input data-k="bal" class="num" readonly tabindex="-1" placeholder="0.00" aria-label="Balance"></td>
+    <td><input data-k="coa" aria-label="CoA"></td>
+    <td><input data-k="dr" class="num" type="number" step="0.01" min="0" placeholder="0.00" aria-label="Debit"></td>
+    <td><input data-k="cr" class="num" type="number" step="0.01" min="0" placeholder="0.00" aria-label="Credit"></td>
+    <td class="rm"><button type="button" title="Remove row" aria-label="Remove row">✕</button></td>`;
+  tr.querySelector('.rm button').onclick = () => { tr.remove(); renumber(); calc(); };
+  tbody.appendChild(tr);
+  renumber();
+}
+function renumber() { [...tbody.rows].forEach((r, i) => r.querySelector('.no').textContent = i + 1); }
+
+function calc() {
+  let a = 0, l = 0, b = 0, d = 0, c = 0;
+  [...tbody.rows].forEach(r => {
+    const g = k => r.querySelector(`[data-k="${k}"]`);
+    const amt = val(g('amt')), liq = val(g('liq'));
+    const bal = (g('amt').value || g('liq').value) ? amt - liq : 0;
+    g('bal').value = bal ? bal.toFixed(2) : '';
+    a += amt; l += liq; b += bal; d += val(g('dr')); c += val(g('cr'));
+  });
+  tAmt.textContent = fmt(a); tLiq.textContent = fmt(l); tBal.textContent = fmt(b);
+  tDr.textContent = fmt(d); tCr.textContent = fmt(c);
+}
+tbody.addEventListener('input', calc);
+
+// Approval columns
+const cols = ['Checker', 'Verifier', 'Approver', 'Receiver', 'Posting Agent'];
+document.getElementById('sign').innerHTML = cols.map(c => `
+  <div class="appr-col"><h3>${c}</h3>
+    <div class="field"><label>Signature</label><input class="sigbox" aria-label="${c} signature"></div>
+    <div class="field"><label>Name</label><input aria-label="${c} name"></div>
+    <div class="field"><label>Position</label><input aria-label="${c} position"></div>
+    <div class="field"><label>Date</label><input type="date" aria-label="${c} date"></div>
+  </div>`).join('');
+
+// Validation
+const required = {vno:'Voucher No', vdate:'Voucher Date', name:'Name', purpose:'Purpose', type:'Type of voucher', mode:'Mode of payment'};
+const isFilled = k => (k === 'type' || k === 'mode')
+  ? !!document.querySelector(`input[name="${k}"]:checked`)
+  : document.getElementById(k).value.trim() !== '';
+
+function validate() {
+  const missing = [];
+  document.querySelectorAll('[data-req]').forEach(f => {
+    const k = f.dataset.req, ok = isFilled(k);
+    f.classList.toggle('invalid', !ok);
+    if (!ok) missing.push(required[k]);
+  });
+  const banner = document.getElementById('banner');
+  banner.classList.toggle('show', missing.length > 0);
+  document.getElementById('bannerList').textContent = 'Missing: ' + missing.join(', ') + '.';
+  if (missing.length) {
+    const first = document.querySelector('.invalid');
+    first.scrollIntoView({behavior: 'smooth', block: 'center'});
+    const target = first.querySelector('input'); if (target) target.focus({preventScroll: true});
+  }
+  return missing.length === 0;
+}
+document.addEventListener('input', e => {
+  const f = e.target.closest('[data-req]');
+  if (f && isFilled(f.dataset.req)) f.classList.remove('invalid');
+  if (!document.querySelector('.invalid')) document.getElementById('banner').classList.remove('show');
+});
+
+function doPrint() { if (validate()) window.print(); }
+function doReset() {
+  if (!confirm('Clear all fields on this voucher?')) return;
+  document.querySelectorAll('input:not([type=radio]),textarea').forEach(e => e.value = '');
+  document.querySelectorAll('input[type=radio]').forEach(e => e.checked = false);
+  document.querySelectorAll('.invalid').forEach(e => e.classList.remove('invalid'));
+  document.getElementById('banner').classList.remove('show');
+  tbody.innerHTML = ''; for (let i = 0; i < ROWS; i++) addRow(); calc();
+}
+
+for (let i = 0; i < ROWS; i++) addRow();
+calc();
+
+const add = () => { addRow(); calc(); };
+document.getElementById('addRow').onclick = add;
+document.getElementById('addRowTop').onclick = add;
+document.getElementById('print').onclick = doPrint;
+document.getElementById('printBottom').onclick = doPrint;
+document.getElementById('reset').onclick = doReset;
+document.getElementById('resetBottom').onclick = doReset;
+</script>
+</body>
+</html>
